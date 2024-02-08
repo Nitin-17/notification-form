@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { getBase64, validationSchema } from "../helper/utils";
+import { getBase64, validationSchema, viewHtml } from "../helper/utils";
 import FileUploadInput from "./FileUploadInput";
 import EditField from "./EditField";
 
@@ -8,6 +8,7 @@ const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [base64URL, setBase64URL] = useState("");
   const [editorValue, setEditorValue] = useState(null);
+  const [list, setList] = useState();
 
   const handleFileInputChange = (e, setFieldValue) => {
     let selectedFile = e.target.files[0];
@@ -34,7 +35,8 @@ const FileUpload = () => {
       //file: editorValue ? editorValue : values.file,
       file: values.option === "upload" ? values.file : editorValue,
     };
-    console.log("Params", param);
+    console.log("Params", param.file);
+    setList(param.file);
     actions.resetForm();
   };
 
@@ -95,7 +97,9 @@ const FileUpload = () => {
           </Form>
         )}
       </Formik>
-      <h1>Hello</h1>
+      <div>
+        <button onClick={() => viewHtml(list)}>View</button>
+      </div>
     </>
   );
 };

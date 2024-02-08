@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { createHtmlDocument } from "../helper/utils";
 
 const EditField = ({ setEditorValue }) => {
-  const [value, setValue] = useState("");
   const [editorHtml, setEditorHtml] = useState();
 
   const modules = {
@@ -43,14 +43,17 @@ const EditField = ({ setEditorValue }) => {
     // Log the HTML document
     //console.log(htmlDoc);
     /*  console.log("content", content);
-    // Serialize the HTML document to a string
+    // Serialize the HTML document tos a string
     const htmlString = new XMLSerializer().serializeToString(htmlDoc);
 
     // Open a new window and set its content to the HTML document
     const newWindow = window.open();
     newWindow.document.write(htmlString); */
     setEditorHtml(content);
-    setEditorValue(htmlDoc);
+    //const fullHTML = createHtmlDocument(htmlDoc);
+    const newHtmlDocument = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title></title>\n</head>\n<body>\n${content}\n</body>\n</html>`;
+    //console.log(fullHTML);
+    setEditorValue(newHtmlDocument);
   };
 
   return (
