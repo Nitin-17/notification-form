@@ -1,21 +1,15 @@
-import { ErrorMessage, useFormikContext } from "formik";
+import { ErrorMessage } from "formik";
 
-const FileUploadInput = ({ handleFileInputChange, setFieldValue }) => {
-  const { values } = useFormikContext();
-
+const FileUploadInput = ({ setFieldValue, handleFileInputChange }) => {
   return (
-    <>
-      {values.option === "upload" && (
-        <div>
-          <input
-            type="file"
-            name="file"
-            onChange={(e) => handleFileInputChange(e, setFieldValue)}
-          />
-          <ErrorMessage name="file" component="div" className="error" />
-        </div>
-      )}
-    </>
+    <div>
+      <input
+        type="file"
+        name="file"
+        onChange={(e) => handleFileInputChange(e, setFieldValue)}
+      />
+      <ErrorMessage name="file" component="div" className="error" />
+    </div>
   );
 };
 

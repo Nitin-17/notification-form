@@ -1,10 +1,10 @@
 import React from "react";
-import FileUpload from "./components/FileUpload";
+import FileForm from "./components/FileForm";
 
 const App = () => {
   return (
     <>
-      <FileUpload />
+      <FileForm />
     </>
   );
 };
