@@ -43,3 +43,15 @@ export const viewHtml = (htmlDoc) => {
   const newWindow = window.open();
   newWindow.document.write(htmlDoc);
 };
+
+/* File Upload  */
+export const checkFileFormat = (file) => {
+  const filesFormats = [".doc", ".docx", "application/pdf"];
+  console.log(file);
+  const isRightFormat = filesFormats.includes(file.type);
+  console.log(isRightFormat);
+  if (!isRightFormat) {
+    alert("You can only upload pdf and doc files");
+    return;
+  }
+};

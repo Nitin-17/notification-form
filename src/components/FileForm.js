@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { getBase64, validationSchema, viewHtml } from "../helper/utils";
+import {
+  getBase64,
+  validationSchema,
+  viewHtml,
+  checkFileFormat,
+} from "../helper/utils";
 import FileUploadInput from "./FileUploadInput";
 import EditField from "./EditField";
 
@@ -28,14 +33,16 @@ const FileUpload = () => {
 
   const handleSubmit = (values, actions) => {
     console.log("values", values, "actions", actions);
+    checkFileFormat(values.file);
     const param = {
       name: values.name,
       description: values.description,
       option: values.option,
       //file: editorValue ? editorValue : values.file,
       file: values.option === "upload" ? values.file : editorValue,
+      type: "",
     };
-    console.log("Params", param.file);
+    console.log("file type is", param.file.type);
     setList(param.file);
     actions.resetForm();
   };
@@ -48,6 +55,7 @@ const FileUpload = () => {
           description: "",
           option: "upload",
           file: null,
+          type: "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
