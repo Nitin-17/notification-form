@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useDispatch } from "react-redux";
 import {
   getBase64,
   validationSchema,
   viewHtml,
   checkFileFormat,
+  checkFileType,
 } from "../helper/utils";
 import FileUploadInput from "./FileUploadInput";
 import EditField from "./EditField";
+import { addFormData } from "../features/listSlice";
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [base64URL, setBase64URL] = useState("");
   const [editorValue, setEditorValue] = useState(null);
   const [list, setList] = useState();
+  const dispatch = useDispatch();
 
   const handleFileInputChange = (e, setFieldValue) => {
     let selectedFile = e.target.files[0];
@@ -33,16 +37,17 @@ const FileUpload = () => {
 
   const handleSubmit = (values, actions) => {
     console.log("values", values, "actions", actions);
-    checkFileFormat(values.file);
+    const fileType = checkFileType(values.file);
     const param = {
       name: values.name,
       description: values.description,
       option: values.option,
       //file: editorValue ? editorValue : values.file,
       file: values.option === "upload" ? values.file : editorValue,
-      type: "",
+      type: fileType,
     };
     console.log("file type is", param.file.type);
+    dispatch(addFormData(param));
     setList(param.file);
     actions.resetForm();
   };

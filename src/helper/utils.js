@@ -36,22 +36,55 @@ export const validationSchema = Yup.object().shape({
   return parsedDoc.documentElement.outerHTML;
 }; */
 
+function dataURItoBlob(dataURI) {
+  // Extract the base64 data from the data URI
+  const base64Data = dataURI.split(",")[1];
+
+  // Convert the base64 data to binary data
+  const byteString = atob(base64Data);
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const int8Array = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < byteString.length; i++) {
+    int8Array[i] = byteString.charCodeAt(i);
+  }
+
+  // Create a Blob object from the binary data
+  const blob = new Blob([int8Array], { type: "application/pdf" });
+  console.log("blob", blob);
+  return blob;
+}
+// data should be your response data in base64 format
+
 export const viewHtml = (htmlDoc) => {
   console.log("Html Doc", htmlDoc);
 
-  // Open a new window and set its content to the HTML document
+  /*const newWindow = window.open();
+  newWindow.document.write(htmlDoc); */
+  //const blob = dataURItoBlob(htmlDoc);
+  // const url = URL.createObjectURL(blob);
+  // window.open(url, "_blank");
   const newWindow = window.open();
-  newWindow.document.write(htmlDoc);
+  newWindow.document.write(
+    `<embed width="100%" height="100%" src="${htmlDoc}" type="application/pdf" />`
+  );
 };
 
 /* File Upload  */
 export const checkFileFormat = (file) => {
   const filesFormats = [".doc", ".docx", "application/pdf"];
-  console.log(file);
   const isRightFormat = filesFormats.includes(file.type);
   console.log(isRightFormat);
   if (!isRightFormat) {
     alert("You can only upload pdf and doc files");
-    return;
+    return false;
   }
+  return true;
+};
+
+/* File Type Function */
+export const checkFileType = (file) => {
+  const docFiles = [".doc", ".docx"];
+  // const pdfFiles = ["application/pdf"];
+  const fileType = docFiles.includes(file.type) ? "doc" : "pdf";
+  return fileType;
 };
