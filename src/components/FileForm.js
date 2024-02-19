@@ -45,6 +45,7 @@ const FileUpload = () => {
     if (values.option !== "edit") {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
+      console.log("File Typ eis", fileType);
 
       if (isRightType) {
         const param = {
@@ -52,7 +53,7 @@ const FileUpload = () => {
           description: values.description,
           option: values.option,
           file: values.option === "upload" ? values.file : editorValue,
-          type: fileType === "pdf" || "doc" ? fileType : "html",
+          type: fileType,
         };
         dispatch(addFormData(param));
         setList(param.file);

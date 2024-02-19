@@ -3,17 +3,27 @@ import parse from "html-react-parser";
 
 export const getBase64 = (file) => {
   return new Promise((resolve) => {
-    let baseURL = "";
     let reader = new FileReader();
 
-    reader.readAsDataURL(file);
+    reader.readAsArrayBuffer(file);
 
     reader.onload = () => {
-      baseURL = reader.result;
-      resolve(baseURL);
+      const base64 = arrayBufferToBase64(reader.result);
+      resolve(base64);
     };
   });
 };
+
+function arrayBufferToBase64(arrayBuffer) {
+  const binaryArray = new Uint8Array(arrayBuffer);
+  let base64 = "";
+
+  for (let i = 0; i < binaryArray.length; i++) {
+    base64 += String.fromCharCode(binaryArray[i]);
+  }
+
+  return btoa(base64);
+}
 
 export const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -63,11 +73,32 @@ export const viewHtml = (htmlDoc, type) => {
   //const blob = dataURItoBlob(htmlDoc);
   // const url = URL.createObjectURL(blob);
   // window.open(url, "_blank");
-  if (type === "pdf" || type === "doc") {
+  if (type === "pdf") {
     const newWindow = window.open();
     newWindow.document.write(
       `<embed width="100%" height="100%" src="${htmlDoc}" type="application/pdf" />`
     );
+  } else if (type === "doc") {
+    // Convert Base64 string to Uint8Array
+    const byteCharacters = atob(htmlDoc);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    // Create Blob from Uint8Array
+    const blob = new Blob([byteArray], {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+
+    // Create a temporary link and trigger download
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "example.docx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   } else {
     const newWindow = window.open("", "_blank");
     newWindow.document.open();
@@ -78,7 +109,12 @@ export const viewHtml = (htmlDoc, type) => {
 
 /* File Upload  */
 export const checkFileFormat = (file) => {
-  const filesFormats = [".doc", ".docx", "application/pdf"];
+  const filesFormats = [
+    ".doc",
+    ".docx",
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
   const isRightFormat = filesFormats.includes(file.type);
   console.log(isRightFormat);
   if (!isRightFormat) {
@@ -90,8 +126,9 @@ export const checkFileFormat = (file) => {
 
 /* File Type Function */
 export const checkFileType = (file) => {
-  const docFiles = [".doc", ".docx"];
+  console.log("FileType inside utils", file);
+  //const docFiles = [".doc", ".docx", ".document"];
   // const pdfFiles = ["application/pdf"];
-  const fileType = docFiles.includes(file.type) ? "doc" : "pdf";
+  const fileType = file.type.includes(".document") ? "doc" : "pdf";
   return fileType;
 };
