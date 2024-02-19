@@ -19,7 +19,9 @@ const FileList = () => {
             <button onClick={() => dispatch(removeFormData(formData.id))}>
               Delete Item
             </button>
-            <button onClick={() => viewHtml(formData.file)}>View Item</button>
+            <button onClick={() => viewHtml(formData.file, formData.type)}>
+              View Item
+            </button>
           </li>
         ))}
       </ul>

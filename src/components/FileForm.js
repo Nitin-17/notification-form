@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import {
   getBase64,
   validationSchema,
-  viewHtml,
   checkFileFormat,
   checkFileType,
 } from "../helper/utils";
@@ -20,8 +19,8 @@ const FileUpload = () => {
   const dispatch = useDispatch();
 
   const handleFileInputChange = (e, setFieldValue) => {
+    console.log("seeeeeeeeeeeeeeeeee", setFieldValue);
     let selectedFile = e.target.files[0];
-    //console.log("File type:", selectedFile.type);
 
     getBase64(selectedFile)
       .then((result) => {
@@ -35,21 +34,33 @@ const FileUpload = () => {
       });
   };
 
+  const handleEditInputChange = (setFieldValue) => {
+    // setFieldValue(null);
+    //console.log("seeeeeeeeeeeeeeeeee", setFieldValue);
+    //handleSubmit(setFieldValue, "html");
+  };
+
   const handleSubmit = (values, actions) => {
-    console.log("values", values, "actions", actions);
-    const fileType = checkFileType(values.file);
-    const param = {
-      name: values.name,
-      description: values.description,
-      option: values.option,
-      //file: editorValue ? editorValue : values.file,
-      file: values.option === "upload" ? values.file : editorValue,
-      type: fileType,
-    };
-    console.log("file type is", param.file.type);
-    dispatch(addFormData(param));
-    setList(param.file);
-    actions.resetForm();
+    console.log("Values", values);
+    if (values.option !== "edit") {
+      const fileType = checkFileType(values.file);
+      const isRightType = checkFileFormat(values.file);
+
+      if (isRightType) {
+        const param = {
+          name: values.name,
+          description: values.description,
+          option: values.option,
+          file: values.option === "upload" ? values.file : editorValue,
+          type: fileType === "pdf" || "doc" ? fileType : "html",
+        };
+        dispatch(addFormData(param));
+        setList(param.file);
+        actions.resetForm();
+      }
+    } else {
+      dispatch(addFormData(values));
+    }
   };
 
   return (
@@ -63,13 +74,9 @@ const FileUpload = () => {
           type: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log(values);
+        onSubmit={(values) => {
+          console.log("-----------------", values);
           handleSubmit(values);
-          /*    setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400); */
         }}
       >
         {({ isSubmitting, setFieldValue, values }) => (
@@ -104,15 +111,15 @@ const FileUpload = () => {
                 handleFileInputChange={handleFileInputChange}
               />
             ) : (
-              <EditField setEditorValue={setEditorValue} />
+              <EditField
+                setFieldValue={setFieldValue}
+                handleEditInputChange={handleEditInputChange}
+              />
             )}
             <button type="submit">Submit</button>
           </Form>
         )}
       </Formik>
-      <div>
-        <button onClick={() => viewHtml(list)}>View</button>
-      </div>
     </>
   );
 };

@@ -7,7 +7,7 @@ const initialState = {
       name: "",
       description: "",
       option: "",
-      file: "",
+      file: null,
       type: "",
     },
   ],
@@ -18,6 +18,7 @@ export const formDataSlice = createSlice({
   initialState,
   reducers: {
     addFormData: (state, action) => {
+      //console.log("called", action);
       console.log("payload", action.payload);
       const { description, file, name, option, type } = action.payload;
       const formData = {
@@ -25,9 +26,10 @@ export const formDataSlice = createSlice({
         name: name,
         description: description,
         option: option,
-        file: file.base64,
-        type: "",
+        file: option === "upload" ? file.base64 : file,
+        type: type,
       };
+      console.log("formData", formData);
       state.formDataList = [...state.formDataList, formData];
     },
     removeFormData: (state, action) => {

@@ -55,18 +55,25 @@ function dataURItoBlob(dataURI) {
 }
 // data should be your response data in base64 format
 
-export const viewHtml = (htmlDoc) => {
-  console.log("Html Doc", htmlDoc);
+export const viewHtml = (htmlDoc, type) => {
+  console.log("HtmlDoc", htmlDoc, type);
 
   /*const newWindow = window.open();
   newWindow.document.write(htmlDoc); */
   //const blob = dataURItoBlob(htmlDoc);
   // const url = URL.createObjectURL(blob);
   // window.open(url, "_blank");
-  const newWindow = window.open();
-  newWindow.document.write(
-    `<embed width="100%" height="100%" src="${htmlDoc}" type="application/pdf" />`
-  );
+  if (type === "pdf" || type === "doc") {
+    const newWindow = window.open();
+    newWindow.document.write(
+      `<embed width="100%" height="100%" src="${htmlDoc}" type="application/pdf" />`
+    );
+  } else {
+    const newWindow = window.open("", "_blank");
+    newWindow.document.open();
+    newWindow.document.write(htmlDoc);
+    newWindow.document.close();
+  }
 };
 
 /* File Upload  */
