@@ -2,6 +2,7 @@ import React from "react";
 import FileForm from "./components/FileForm.js";
 import { NavLink, Route, Routes } from "react-router-dom";
 import FileList from "./components/FileList.js";
+import "./App.css";
 
 const App = () => {
   return (

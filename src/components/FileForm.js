@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import {
@@ -6,6 +6,7 @@ import {
   validationSchema,
   checkFileFormat,
   checkFileType,
+  getCurrentDate,
 } from "../helper/utils";
 import FileUploadInput from "./FileUploadInput";
 import EditField from "./EditField";
@@ -16,10 +17,11 @@ const FileUpload = () => {
   const [base64URL, setBase64URL] = useState("");
   const [editorValue, setEditorValue] = useState(null);
   const [list, setList] = useState();
+  const [isSubmittedForm, setIsSubmittedForm] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("upload");
   const dispatch = useDispatch();
 
   const handleFileInputChange = (e, setFieldValue) => {
-    console.log("seeeeeeeeeeeeeeeeee", setFieldValue);
     let selectedFile = e.target.files[0];
 
     getBase64(selectedFile)
@@ -35,14 +37,12 @@ const FileUpload = () => {
   };
 
   const handleEditInputChange = (setFieldValue) => {
-    // setFieldValue(null);
-    //console.log("seeeeeeeeeeeeeeeeee", setFieldValue);
-    //handleSubmit(setFieldValue, "html");
+    console.log("called");
   };
 
-  const handleSubmit = (values, actions) => {
+  const handleSubmit = async (values, actions) => {
     console.log("Values", values);
-    if (values.option !== "edit") {
+    if (values.option !== "edit" && values.file != null) {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
       console.log("File Typ eis", fileType);
@@ -54,13 +54,21 @@ const FileUpload = () => {
           option: values.option,
           file: values.option === "upload" ? values.file : editorValue,
           type: fileType,
+          date: getCurrentDate(),
         };
         dispatch(addFormData(param));
         setList(param.file);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         actions.resetForm();
+        setIsSubmittedForm(true);
+        //resetUploadField(actions.setFieldValue);
       }
     } else {
-      dispatch(addFormData(values));
+      if (values.file !== null) {
+        dispatch(addFormData(values));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        actions.resetForm();
+      }
     }
   };
 
@@ -75,49 +83,71 @@ const FileUpload = () => {
           type: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
-          console.log("-----------------", values);
-          handleSubmit(values);
+        onSubmit={(values, actions) => {
+          handleSubmit(values, actions);
         }}
       >
         {({ isSubmitting, setFieldValue, values }) => (
           <Form>
-            <div>
-              <label htmlFor="name">Name</label>
-              <Field type="text" name="name" />
-              <ErrorMessage name="name" component="div" className="error" />
-            </div>
-            <div>
-              <label htmlFor="description">Description</label>
-              <Field type="text" name="description" />
+            <div className="flex flex-col gap-4 justify-center items-center">
+              <div className="flex flex-row justify-center items-center gap-2 mt-4">
+                <label htmlFor="name">Name</label>
+                <Field
+                  type="text"
+                  name="name"
+                  className="mt-1 w-40 h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm py-2"
+                />
+              </div>
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="error text-red-500"
+              />
+              <div className="flex flex-row justify-center items-center gap-2 mt-2">
+                <label htmlFor="description">Description</label>
+                <Field
+                  type="text"
+                  name="description"
+                  className="mt-1 w-40 h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm py-2"
+                />
+              </div>
               <ErrorMessage
                 name="description"
                 component="div"
-                className="error"
+                className="error text-red-500"
               />
+              <div className="flex flex-row gap-4">
+                <label>
+                  <Field type="radio" name="option" value="upload" />
+                  Upload
+                </label>
+                <label>
+                  <Field type="radio" name="option" value="edit" />
+                  Edit
+                </label>
+              </div>
+              <div className="flex flex-row justify-center items-center">
+                {values.option === "upload" ? (
+                  <FileUploadInput
+                    setFieldValue={setFieldValue}
+                    handleFileInputChange={handleFileInputChange}
+                    isSubmittedForm={isSubmittedForm}
+                    setIsSubmittedForm={setIsSubmittedForm}
+                  />
+                ) : (
+                  <EditField
+                    setFieldValue={setFieldValue}
+                    handleEditInputChange={handleEditInputChange}
+                  />
+                )}
+              </div>
+              <button
+                type="submit"
+                className="w-32 rounded-full bg-cyan-400 border-2 p-3 text-lg"
+              >
+                Submit
+              </button>
             </div>
-            <div>
-              <label>
-                <Field type="radio" name="option" value="upload" />
-                Upload
-              </label>
-              <label>
-                <Field type="radio" name="option" value="edit" />
-                Edit
-              </label>
-            </div>
-            {values.option === "upload" ? (
-              <FileUploadInput
-                setFieldValue={setFieldValue}
-                handleFileInputChange={handleFileInputChange}
-              />
-            ) : (
-              <EditField
-                setFieldValue={setFieldValue}
-                handleEditInputChange={handleEditInputChange}
-              />
-            )}
-            <button type="submit">Submit</button>
           </Form>
         )}
       </Formik>

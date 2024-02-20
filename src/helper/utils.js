@@ -144,3 +144,24 @@ export const checkFileType = (file) => {
   const fileType = file.type.includes(".document") ? "doc" : "pdf";
   return fileType;
 };
+
+// Current Date
+export const getCurrentDate = () => {
+  const d = new Date();
+  return `${d.getDate()} ${
+    [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ][d.getMonth()]
+  } ${d.getFullYear()}`;
+};

@@ -1,16 +1,7 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const initialState = {
-  formDataList: [
-    {
-      id: 1,
-      name: "",
-      description: "",
-      option: "",
-      file: null,
-      type: "",
-    },
-  ],
+  formDataList: [],
 };
 
 export const formDataSlice = createSlice({
@@ -20,7 +11,7 @@ export const formDataSlice = createSlice({
     addFormData: (state, action) => {
       //console.log("called", action);
       console.log("payload", action.payload);
-      const { description, file, name, option, type } = action.payload;
+      const { description, file, name, option, type, date } = action.payload;
       const formData = {
         id: nanoid(),
         name: name,
@@ -28,6 +19,7 @@ export const formDataSlice = createSlice({
         option: option,
         file: option === "upload" ? file.base64 : file,
         type: type,
+        date: date,
       };
       console.log("formData", formData);
       state.formDataList = [...state.formDataList, formData];

@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { getCurrentDate } from "../helper/utils";
 
 const EditField = ({ setFieldValue, handleEditInputChange }) => {
   const [editorHtml, setEditorHtml] = useState();
@@ -31,10 +32,10 @@ const EditField = ({ setFieldValue, handleEditInputChange }) => {
   const handleEditorChange = (content) => {
     setEditorHtml(content);
     const newHtmlDocument = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title></title>\n</head>\n<body>\n${content}\n</body>\n</html>`;
-    //console.log(fullHTML);
     setFieldValue("file", newHtmlDocument);
     const type = "html";
     setFieldValue("type", type);
+    setFieldValue("date", getCurrentDate());
     handleEditInputChange(newHtmlDocument);
   };
 
