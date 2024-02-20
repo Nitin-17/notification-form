@@ -46,7 +46,7 @@ export const validationSchema = Yup.object().shape({
   return parsedDoc.documentElement.outerHTML;
 }; */
 
-function dataURItoBlob(dataURI) {
+/* function dataURItoBlob(dataURI) {
   // Extract the base64 data from the data URI
   const base64Data = dataURI.split(",")[1];
 
@@ -62,8 +62,18 @@ function dataURItoBlob(dataURI) {
   const blob = new Blob([int8Array], { type: "application/pdf" });
   console.log("blob", blob);
   return blob;
-}
+} */
 // data should be your response data in base64 format
+
+function base64ToBlob(base64, type = "application/octet-stream") {
+  const binStr = atob(base64);
+  const len = binStr.length;
+  const arr = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    arr[i] = binStr.charCodeAt(i);
+  }
+  return new Blob([arr], { type: type });
+}
 
 export const viewHtml = (htmlDoc, type) => {
   console.log("HtmlDoc", htmlDoc, type);
@@ -74,9 +84,11 @@ export const viewHtml = (htmlDoc, type) => {
   // const url = URL.createObjectURL(blob);
   // window.open(url, "_blank");
   if (type === "pdf") {
-    const newWindow = window.open();
-    newWindow.document.write(
-      `<embed width="100%" height="100%" src="${htmlDoc}" type="application/pdf" />`
+    const blob = base64ToBlob(htmlDoc, "application/pdf");
+    const url = URL.createObjectURL(blob);
+    const pdfWindow = window.open("");
+    pdfWindow.document.write(
+      "<iframe width='100%' height='100%' src='" + url + "'></iframe>"
     );
   } else if (type === "doc") {
     // Convert Base64 string to Uint8Array
