@@ -10,7 +10,7 @@ const FileUploadInput = ({
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    console.log("called", isSubmittedForm);
+    // console.log("called", isSubmittedForm);
     if (isSubmittedForm) {
       fileInputRef.current.value = ""; // Reset the value of the input field
     }

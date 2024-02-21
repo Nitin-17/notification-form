@@ -6,7 +6,7 @@ import { viewHtml } from "../helper/utils";
 const FileList = () => {
   const formDataList = useSelector((state) => state.formDataList);
   const dispatch = useDispatch();
-  console.log("formDatalist", formDataList);
+  //console.log("formDatalist", formDataList);
   return (
     <>
       <div className="flex flex-row justify-center items-center text-xl font-bold mb-4">

@@ -7,6 +7,8 @@ import {
   checkFileFormat,
   checkFileType,
   getCurrentDate,
+  htmlValidationSchema,
+  emptySchema,
 } from "../helper/utils";
 import FileUploadInput from "./FileUploadInput";
 import EditField from "./EditField";
@@ -18,6 +20,7 @@ const FileUpload = () => {
   const [editorValue, setEditorValue] = useState(null);
   const [list, setList] = useState();
   const [isSubmittedForm, setIsSubmittedForm] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("upload");
   const dispatch = useDispatch();
 
   const handleFileInputChange = (e, setFieldValue) => {
@@ -44,7 +47,7 @@ const FileUpload = () => {
     if (values.option !== "edit") {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
-      console.log("File Typ eis", fileType);
+      console.log("File Type is", fileType);
 
       if (isRightType) {
         const param = {
@@ -60,7 +63,6 @@ const FileUpload = () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         actions.resetForm();
         setIsSubmittedForm(true);
-        //resetUploadField(actions.setFieldValue);
       }
     } else {
       dispatch(addFormData(values));
@@ -68,6 +70,8 @@ const FileUpload = () => {
       actions.resetForm();
     }
   };
+
+  console.log("state changed", selectedOption);
 
   return (
     <>
@@ -84,47 +88,73 @@ const FileUpload = () => {
           handleSubmit(values, actions);
         }}
       >
-        {({ isSubmitting, setFieldValue, values }) => (
+        {({ isSubmitting, resetForm, setFieldValue, values }) => (
           <Form>
             <div className="flex flex-col gap-4 justify-center items-center">
-              <div className="flex flex-row justify-center items-center gap-2 mt-4">
-                <label htmlFor="name">Name</label>
-                <Field
-                  type="text"
+              {/* ---------- */}
+
+              {}
+
+              <div className="flex flex-col justify-center items-center gap-2 mt-4">
+                <div className="flex flex-row justify-center items-center gap-2 mt-4">
+                  <label htmlFor="name">Name</label>
+                  <Field
+                    type="text"
+                    name="name"
+                    className="mt-1 w-40 h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm py-2"
+                  />
+                </div>
+                <ErrorMessage
                   name="name"
-                  className="mt-1 w-40 h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm py-2"
+                  component="div"
+                  className="error text-red-500"
                 />
-              </div>
-              <ErrorMessage
-                name="name"
-                component="div"
-                className="error text-red-500"
-              />
-              <div className="flex flex-row justify-center items-center gap-2 mt-2">
-                <label htmlFor="description">Description</label>
-                <Field
-                  type="text"
+                <div className="flex flex-row justify-center items-center gap-2 mt-2">
+                  <label htmlFor="description">Description</label>
+                  <Field
+                    type="text"
+                    name="description"
+                    className="mt-1 w-40 h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm py-2"
+                  />
+                </div>
+                <ErrorMessage
                   name="description"
-                  className="mt-1 w-40 h-8 rounded-md border border-gray-200 shadow-sm sm:text-sm py-2"
+                  component="div"
+                  className="error text-red-500"
                 />
               </div>
-              <ErrorMessage
-                name="description"
-                component="div"
-                className="error text-red-500"
-              />
+
+              {/* ------------- */}
               <div className="flex flex-row gap-4">
                 <label>
-                  <Field type="radio" name="option" value="upload" />
+                  <Field
+                    type="radio"
+                    name="option"
+                    value="upload"
+                    checked={selectedOption === "upload"}
+                    onChange={() => {
+                      setSelectedOption("upload");
+                      resetForm();
+                    }}
+                  />
                   Upload
                 </label>
                 <label>
-                  <Field type="radio" name="option" value="edit" />
+                  <Field
+                    type="radio"
+                    name="option"
+                    value="edit"
+                    checked={selectedOption === "edit"}
+                    onChange={() => {
+                      setSelectedOption("edit");
+                      resetForm();
+                    }}
+                  />
                   Edit
                 </label>
               </div>
               <div className="flex flex-row justify-center items-center">
-                {values.option === "upload" ? (
+                {selectedOption === "upload" ? (
                   <FileUploadInput
                     setFieldValue={setFieldValue}
                     handleFileInputChange={handleFileInputChange}

@@ -78,7 +78,7 @@ function base64ToBlob(base64, type = "application/octet-stream") {
 }
 
 export const viewHtml = (htmlDoc, type) => {
-  console.log("HtmlDoc", htmlDoc, type);
+  //console.log("HtmlDoc", htmlDoc, type);
 
   if (type === "pdf") {
     const blob = base64ToBlob(htmlDoc, "application/pdf");
@@ -125,7 +125,7 @@ export const checkFileFormat = (file) => {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
   const isRightFormat = filesFormats.includes(file.type);
-  console.log(isRightFormat);
+  //console.log(isRightFormat);
   if (!isRightFormat) {
     alert("You can only upload pdf and doc files");
     return false;
@@ -162,3 +162,5 @@ export const getCurrentDate = () => {
     ][d.getMonth()]
   } ${d.getFullYear()}`;
 };
+
+export const emptySchema = Yup.object().shape({});
