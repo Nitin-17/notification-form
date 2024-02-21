@@ -44,10 +44,10 @@ const FileUpload = () => {
 
   const handleSubmit = async (values, actions) => {
     console.log("Values", values);
-    if (values.option !== "edit") {
+    if (selectedOption !== "edit") {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
-      console.log("File Type is", fileType);
+      //console.log("File Type is", fileType);
 
       if (isRightType) {
         const param = {
@@ -132,9 +132,9 @@ const FileUpload = () => {
                     name="option"
                     value="upload"
                     checked={selectedOption === "upload"}
-                    onChange={() => {
-                      setSelectedOption("upload");
+                    onClick={() => {
                       resetForm();
+                      setSelectedOption("upload");
                     }}
                   />
                   Upload
@@ -145,9 +145,9 @@ const FileUpload = () => {
                     name="option"
                     value="edit"
                     checked={selectedOption === "edit"}
-                    onChange={() => {
-                      setSelectedOption("edit");
+                    onClick={() => {
                       resetForm();
+                      setSelectedOption("edit");
                     }}
                   />
                   Edit
