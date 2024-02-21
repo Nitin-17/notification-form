@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import {
@@ -18,7 +18,6 @@ const FileUpload = () => {
   const [editorValue, setEditorValue] = useState(null);
   const [list, setList] = useState();
   const [isSubmittedForm, setIsSubmittedForm] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("upload");
   const dispatch = useDispatch();
 
   const handleFileInputChange = (e, setFieldValue) => {
@@ -42,7 +41,7 @@ const FileUpload = () => {
 
   const handleSubmit = async (values, actions) => {
     console.log("Values", values);
-    if (values.option !== "edit" && values.file != null) {
+    if (values.option !== "edit") {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
       console.log("File Typ eis", fileType);
@@ -64,11 +63,9 @@ const FileUpload = () => {
         //resetUploadField(actions.setFieldValue);
       }
     } else {
-      if (values.file !== null) {
-        dispatch(addFormData(values));
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        actions.resetForm();
-      }
+      dispatch(addFormData(values));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      actions.resetForm();
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { getCurrentDate } from "../helper/utils";
+import { ErrorMessage } from "formik";
 
 const EditField = ({ setFieldValue, handleEditInputChange }) => {
   const [editorHtml, setEditorHtml] = useState();
@@ -40,13 +41,20 @@ const EditField = ({ setFieldValue, handleEditInputChange }) => {
   };
 
   return (
-    <ReactQuill
-      theme="snow" // or 'bubble'
-      value={editorHtml}
-      onChange={(e) => handleEditorChange(e, setFieldValue)}
-      modules={modules}
-      formats={formats}
-    />
+    <>
+      <ReactQuill
+        theme="snow" // or 'bubble'
+        value={editorHtml}
+        onChange={(e) => handleEditorChange(e, setFieldValue)}
+        modules={modules}
+        formats={formats}
+      />
+      <ErrorMessage
+        name="file"
+        component="div"
+        className="error text-red-500"
+      />
+    </>
   );
 };
 

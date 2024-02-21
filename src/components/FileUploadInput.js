@@ -25,7 +25,11 @@ const FileUploadInput = ({
         ref={fileInputRef}
         onChange={(e) => handleFileInputChange(e, setFieldValue)}
       />
-      <ErrorMessage name="file" component="div" className="error" />
+      <ErrorMessage
+        name="file"
+        component="div"
+        className="error text-red-500"
+      />
     </div>
   );
 };

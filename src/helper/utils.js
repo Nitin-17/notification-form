@@ -1,12 +1,9 @@
 import * as Yup from "yup";
-import parse from "html-react-parser";
 
 export const getBase64 = (file) => {
   return new Promise((resolve) => {
     let reader = new FileReader();
-
     reader.readAsArrayBuffer(file);
-
     reader.onload = () => {
       const base64 = arrayBufferToBase64(reader.result);
       resolve(base64);
@@ -14,20 +11,25 @@ export const getBase64 = (file) => {
   });
 };
 
-function arrayBufferToBase64(arrayBuffer) {
+const arrayBufferToBase64 = (arrayBuffer) => {
   const binaryArray = new Uint8Array(arrayBuffer);
   let base64 = "";
-
   for (let i = 0; i < binaryArray.length; i++) {
     base64 += String.fromCharCode(binaryArray[i]);
   }
-
   return btoa(base64);
-}
+};
 
 export const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   description: Yup.string().required("Description is required"),
+  file: Yup.mixed().required("Please select a file"),
+});
+
+export const htmlValidationSchema = Yup.object().shape({
+  name: Yup.string().required("Name is required"),
+  description: Yup.string().required("Description is required"),
+  file: Yup.mixed().required("Please enter valid content"),
 });
 
 /* export const createHtmlDocument = (htmlString) => { 
@@ -78,11 +80,6 @@ function base64ToBlob(base64, type = "application/octet-stream") {
 export const viewHtml = (htmlDoc, type) => {
   console.log("HtmlDoc", htmlDoc, type);
 
-  /*const newWindow = window.open();
-  newWindow.document.write(htmlDoc); */
-  //const blob = dataURItoBlob(htmlDoc);
-  // const url = URL.createObjectURL(blob);
-  // window.open(url, "_blank");
   if (type === "pdf") {
     const blob = base64ToBlob(htmlDoc, "application/pdf");
     const url = URL.createObjectURL(blob);
@@ -139,8 +136,8 @@ export const checkFileFormat = (file) => {
 /* File Type Function */
 export const checkFileType = (file) => {
   console.log("FileType inside utils", file);
-  //const docFiles = [".doc", ".docx", ".document"];
-  // const pdfFiles = ["application/pdf"];
+  /* const docFiles = [".doc", ".docx", ".document"];
+   const pdfFiles = ["application/pdf"]; */
   const fileType = file.type.includes(".document") ? "doc" : "pdf";
   return fileType;
 };
