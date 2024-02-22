@@ -45,7 +45,7 @@ const FileUpload = () => {
   };
 
   const handleSubmit = async (values, actions) => {
-    //console.log("Values", values);
+    console.log("Values---", values);
     if (selectedOption !== "edit") {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
@@ -66,7 +66,7 @@ const FileUpload = () => {
         actions.resetForm();
         setIsSubmittedForm(true);
       }
-    } else {
+    } /* else {
       var myblob = new Blob([values.file], {
         type: "text/plain",
       });
@@ -88,6 +88,10 @@ const FileUpload = () => {
         .catch((err) => {
           console.log(err);
         });
+    } */ else {
+      dispatch(addFormData(values));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      actions.resetForm();
     }
   };
 

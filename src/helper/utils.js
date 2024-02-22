@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { jsPDF } from "jspdf";
+import jsPDF from "jspdf";
 
 export const getBase64 = (file) => {
   console.log("File is", file);
@@ -81,7 +81,20 @@ function base64ToBlob(base64, type = "application/octet-stream") {
   return new Blob([arr], { type: type });
 }
 
-export const viewHtml = (htmlDoc, type = "pdf") => {
+const getBase64FromUrl = async (url) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+  });
+};
+
+export const viewHtml = async (htmlDoc, type = "pdf") => {
   //console.log("HtmlDoc", htmlDoc, type);
 
   if (type === "pdf") {
@@ -113,6 +126,7 @@ export const viewHtml = (htmlDoc, type = "pdf") => {
     link.click();
     document.body.removeChild(link);
   } else if (type === "html") {
+    /* else if (type === "html") {
     const htmlBase64 = htmlDoc;
 
     // Decode the Base64 encoded HTML string
@@ -122,8 +136,8 @@ export const viewHtml = (htmlDoc, type = "pdf") => {
     const pdfDoc = new jsPDF();
 
     // Set font and text size
-    /*     pdfDoc.setFont("helvetica");
-    pdfDoc.setFontSize(12); */
+    // pdfDoc.setFont("helvetica");
+    pdfDoc.setFontSize(12);
 
     // Add HTML content to the PDF document
     pdfDoc.html(decodedHtml, {
@@ -138,6 +152,31 @@ export const viewHtml = (htmlDoc, type = "pdf") => {
         window.open(pdfUrl, "_blank");
       },
     });
+  } */
+    /* const pdf = new jsPDF("p", "mm", "a4");
+    pdf.fromHTML(htmlDoc);
+    pdf.save("my-document.pdf"); */
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlDoc, "text/html");
+    const images = doc.querySelectorAll("img");
+
+    for (const img of images) {
+      const url = img.getAttribute("src");
+      if (url.startsWith("data:image")) continue; // Skip if the image is already in base64 format
+      const base64 = await getBase64FromUrl(url);
+      img.setAttribute("src", base64);
+    }
+
+    htmlDoc = doc.documentElement.outerHTML;
+    const pdf = new jsPDF();
+    pdf.fromHTML(htmlDoc, 15, 15);
+    const pdfBlob = pdf.output("blob");
+
+    // Create URL for the Blob
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    // Open the PDF in a new tab
+    window.open(pdfUrl, "_blank");
   } else {
     const newWindow = window.open("", "_blank");
     newWindow.document.open();
