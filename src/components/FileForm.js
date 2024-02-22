@@ -21,10 +21,12 @@ const FileUpload = () => {
   const [list, setList] = useState();
   const [isSubmittedForm, setIsSubmittedForm] = useState(false);
   const [selectedOption, setSelectedOption] = useState("upload");
+  const [htmlBase64, setHtmlBase64] = useState(null);
   const dispatch = useDispatch();
 
   const handleFileInputChange = (e, setFieldValue) => {
     let selectedFile = e.target.files[0];
+    //console.log("EEEE", selectedFile);
 
     getBase64(selectedFile)
       .then((result) => {
@@ -39,11 +41,11 @@ const FileUpload = () => {
   };
 
   const handleEditInputChange = (setFieldValue) => {
-    console.log("called");
+    //console.log("called");
   };
 
   const handleSubmit = async (values, actions) => {
-    console.log("Values", values);
+    //console.log("Values", values);
     if (selectedOption !== "edit") {
       const fileType = checkFileType(values.file);
       const isRightType = checkFileFormat(values.file);
@@ -65,9 +67,27 @@ const FileUpload = () => {
         setIsSubmittedForm(true);
       }
     } else {
-      dispatch(addFormData(values));
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      actions.resetForm();
+      var myblob = new Blob([values.file], {
+        type: "text/plain",
+      });
+
+      // Call getBase64 and handle the result inside the then block
+      getBase64(myblob)
+        .then((result) => {
+          console.log("result is", result);
+          // Update values["file"] inside the then block
+          values["file"] = result;
+          console.log(values);
+
+          // Dispatch an action here after setting values["file"]
+          dispatch(addFormData(values));
+
+          // Reset the form or perform other actions as needed
+          actions.resetForm();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 

@@ -1,8 +1,11 @@
 import * as Yup from "yup";
+import { jsPDF } from "jspdf";
 
 export const getBase64 = (file) => {
+  console.log("File is", file);
   return new Promise((resolve) => {
     let reader = new FileReader();
+    console.log("reader result", reader);
     reader.readAsArrayBuffer(file);
     reader.onload = () => {
       const base64 = arrayBufferToBase64(reader.result);
@@ -12,6 +15,7 @@ export const getBase64 = (file) => {
 };
 
 const arrayBufferToBase64 = (arrayBuffer) => {
+  console.log("Array Buffer", arrayBuffer);
   const binaryArray = new Uint8Array(arrayBuffer);
   let base64 = "";
   for (let i = 0; i < binaryArray.length; i++) {
@@ -77,7 +81,7 @@ function base64ToBlob(base64, type = "application/octet-stream") {
   return new Blob([arr], { type: type });
 }
 
-export const viewHtml = (htmlDoc, type) => {
+export const viewHtml = (htmlDoc, type = "pdf") => {
   //console.log("HtmlDoc", htmlDoc, type);
 
   if (type === "pdf") {
@@ -108,6 +112,32 @@ export const viewHtml = (htmlDoc, type) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  } else if (type === "html") {
+    const htmlBase64 = htmlDoc;
+
+    // Decode the Base64 encoded HTML string
+    const decodedHtml = window.atob(decodeURIComponent(htmlBase64));
+
+    // Create a new jsPDF instance
+    const pdfDoc = new jsPDF();
+
+    // Set font and text size
+    /*     pdfDoc.setFont("helvetica");
+    pdfDoc.setFontSize(12); */
+
+    // Add HTML content to the PDF document
+    pdfDoc.html(decodedHtml, {
+      callback: (pdf) => {
+        // Save the PDF as Blob
+        const pdfBlob = pdf.output("blob");
+
+        // Create URL for the Blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Open the PDF in a new tab
+        window.open(pdfUrl, "_blank");
+      },
+    });
   } else {
     const newWindow = window.open("", "_blank");
     newWindow.document.open();
