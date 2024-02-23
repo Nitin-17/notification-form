@@ -154,25 +154,69 @@ export const viewHtml = async (htmlDoc, type = "pdf") => {
     });
   } */
 
-    const imgSrcs = [];
+    /*     const imgSrcs = [];
     const imgRegex = /<img[^>]+src="?([^"\s]+)"?[^>]*>/g;
 
     let match;
     while ((match = imgRegex.exec(htmlDoc)) !== null) {
+      console.log("match is", match);
       imgSrcs.push(match[1]);
     }
 
     console.log("images", imgSrcs);
 
     var doc = new jsPDF();
-    let string = "<p>Hello There</p>";
 
-    doc.setFontSize(40);
-    //doc.text(htmlDoc, 15, 15);
-    doc.text(35, 25, string);
+    //doc.setFontSize(40);
+    //doc.text(htmlDoc, 5, 5);
+    let str = doc.fromHTML(htmlDoc);
+    console.log("str", str);
+    //doc.text(35, 25, "Hello There");
     if (imgSrcs.length > 0) {
       doc.addImage(imgSrcs[0], "JPEG", 15, 40, 180, 180);
+    } */
+
+    const imgSrcs = [];
+    const imgRegex = /<img[^>]+src="([^">]+)"/g;
+    let match;
+    while ((match = imgRegex.exec(htmlDoc)) !== null) {
+      imgSrcs.push(match[1]);
     }
+
+    // Initialize jsPDF
+    const doc = new jsPDF();
+
+    // Split the HTML string into segments based on img tags
+    const segments = htmlDoc.split(imgRegex);
+
+    // Iterate through the segments
+    let yOffset = 10; // Initial Y offset for placing content
+    segments.forEach((segment, index) => {
+      // If the segment is an img tag
+      if (index % 2 === 1) {
+        // Add the corresponding image to the PDF
+        if (imgSrcs.length > 0) {
+          doc.addImage(imgSrcs.shift(), "JPEG", 15, yOffset, 180, 180);
+          console.log("Added");
+        }
+        yOffset += 190; // Adjust Y offset for the next content
+      } else {
+        // If the segment is not an img tag, add it to the PDF as text
+        console.log("Html", htmlDoc);
+        let str = doc.fromHTML(
+          "Hello",
+          15,
+          15,
+          {
+            width: 170,
+          },
+          () => {}
+        );
+        console.log("Added txt", str);
+        //doc.text(str, 15, yOffset);
+        yOffset += 10; // Adjust Y offset for the next content
+      }
+    });
 
     const pdfBlob = doc.output("blob");
 

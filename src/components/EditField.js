@@ -48,6 +48,7 @@ const EditField = ({ setFieldValue, handleEditInputChange }) => {
         onChange={(e) => handleEditorChange(e, setFieldValue)}
         modules={modules}
         formats={formats}
+        id="react-quill-id"
       />
       <ErrorMessage
         name="file"
