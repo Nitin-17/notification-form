@@ -32,7 +32,7 @@ const EditField = ({ setFieldValue, handleEditInputChange }) => {
 
   const handleEditorChange = (content) => {
     setEditorHtml(content);
-    const newHtmlDocument = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title></title>\n</head>\n<body>\n${content}\n</body>\n</html>`;
+    const newHtmlDocument = `<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title></title>\n</head>\n<body><div id="container">\n${content}\n</div></body>\n</html>`;
     setFieldValue("file", content);
     const type = "html";
     setFieldValue("type", type);

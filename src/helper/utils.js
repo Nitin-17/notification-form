@@ -1,11 +1,16 @@
 import * as Yup from "yup";
 import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import htmlToPdfmake from "html-to-pdfmake";
+const pdfMake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
+
+// Register the fonts
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export const getBase64 = (file) => {
-  console.log("File is", file);
   return new Promise((resolve) => {
     let reader = new FileReader();
-    console.log("reader result", reader);
     reader.readAsArrayBuffer(file);
     reader.onload = () => {
       const base64 = arrayBufferToBase64(reader.result);
@@ -15,7 +20,6 @@ export const getBase64 = (file) => {
 };
 
 const arrayBufferToBase64 = (arrayBuffer) => {
-  console.log("Array Buffer", arrayBuffer);
   const binaryArray = new Uint8Array(arrayBuffer);
   let base64 = "";
   for (let i = 0; i < binaryArray.length; i++) {
@@ -81,20 +85,7 @@ function base64ToBlob(base64, type = "application/octet-stream") {
   return new Blob([arr], { type: type });
 }
 
-const getBase64FromUrl = async (url) => {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => {
-      resolve(reader.result);
-    };
-    reader.onerror = reject;
-  });
-};
-
-export const viewHtml = async (htmlDoc, type = "pdf") => {
+export const viewHtml = async (htmlDoc, type) => {
   //console.log("HtmlDoc", htmlDoc, type);
 
   if (type === "pdf") {
@@ -125,137 +116,89 @@ export const viewHtml = async (htmlDoc, type = "pdf") => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  } else if (type === "html") {
-    /* else if (type === "html") {
-    const htmlBase64 = htmlDoc;
+  } else {
+    console.log("called");
+    /*    var doc = new jsPDF();
 
-    // Decode the Base64 encoded HTML string
-    const decodedHtml = window.atob(decodeURIComponent(htmlBase64));
-
-    // Create a new jsPDF instance
-    const pdfDoc = new jsPDF();
-
-    // Set font and text size
-    // pdfDoc.setFont("helvetica");
-    pdfDoc.setFontSize(12);
-
-    // Add HTML content to the PDF document
-    pdfDoc.html(decodedHtml, {
-      callback: (pdf) => {
-        // Save the PDF as Blob
-        const pdfBlob = pdf.output("blob");
-
-        // Create URL for the Blob
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-
-        // Open the PDF in a new tab
-        window.open(pdfUrl, "_blank");
-      },
-    });
-  } */
-
-    /*     const imgSrcs = [];
-    const imgRegex = /<img[^>]+src="?([^"\s]+)"?[^>]*>/g;
-
-    let match;
-    while ((match = imgRegex.exec(htmlDoc)) !== null) {
-      console.log("match is", match);
-      imgSrcs.push(match[1]);
-    }
-
-    console.log("images", imgSrcs);
-
-    var doc = new jsPDF();
-
-    //doc.setFontSize(40);
-    //doc.text(htmlDoc, 5, 5);
-    let str = doc.fromHTML(htmlDoc);
-    console.log("str", str);
-    //doc.text(35, 25, "Hello There");
-    if (imgSrcs.length > 0) {
-      doc.addImage(imgSrcs[0], "JPEG", 15, 40, 180, 180);
-    } */
-
-    const imgSrcs = [];
-    const imgRegex = /<img[^>]+src="([^">]+)"/g;
-    let match;
-    while ((match = imgRegex.exec(htmlDoc)) !== null) {
-      imgSrcs.push(match[1]);
-    }
-
-    // Initialize jsPDF
-    const doc = new jsPDF();
-
-    // Split the HTML string into segments based on img tags
-    const segments = htmlDoc.split(imgRegex);
-
-    // Iterate through the segments
-    let yOffset = 10; // Initial Y offset for placing content
-    segments.forEach((segment, index) => {
-      // If the segment is an img tag
-      if (index % 2 === 1) {
-        // Add the corresponding image to the PDF
-        if (imgSrcs.length > 0) {
-          doc.addImage(imgSrcs.shift(), "JPEG", 15, yOffset, 180, 180);
-          console.log("Added");
-        }
-        yOffset += 190; // Adjust Y offset for the next content
-      } else {
-        // If the segment is not an img tag, add it to the PDF as text
-        console.log("Html", htmlDoc);
-        let str = doc.fromHTML(
-          "Hello",
-          15,
-          15,
-          {
-            width: 170,
-          },
-          () => {}
-        );
-        console.log("Added txt", str);
-        //doc.text(str, 15, yOffset);
-        yOffset += 10; // Adjust Y offset for the next content
-      }
-    });
-
-    const pdfBlob = doc.output("blob");
-
-    // Create URL for the Blob
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-
-    // Open the PDF in a new tab
-    window.open(pdfUrl, "_blank");
-
-    /* const pdf = new jsPDF();
-    const specialElementHandlers = {
-      "#editor": (element, renderer) => {
+    // We'll make our own renderer to skip this editor
+    var specialElementHandlers = {
+      "#editor": function (element, renderer) {
         return true;
       },
     };
 
-    pdf.fromHTML(
-      htmlDoc,
-      15,
-      15,
-      {
-        width: 170,
-        elementHandlers: specialElementHandlers,
+    // All units are in the set measurement for the document
+    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+    doc.fromHTML(htmlDoc, 15, 15, {
+      width: 170,
+      elementHandlers: specialElementHandlers,
+    }); */
+
+    /*     var doc = new jsPDF();
+    const tempElement = document.createElement("div");
+    tempElement.innerHTML = htmlDoc;
+    console.log("htmldoccccc", tempElement);
+
+    // Assuming "container" is an ID, use "#" to select it
+    const input = tempElement.querySelector("#container");
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, "JPEG", 0, 0);
+      // pdf.output('dataurlnewwindow');
+      pdf.save("download.pdf");
+    }); */
+
+    const domParser = new DOMParser();
+    const htmlDocc = domParser.parseFromString(htmlDoc, "text/html");
+
+    const paragraphs = Array.from(htmlDocc.querySelectorAll("p"));
+    const images = Array.from(htmlDocc.querySelectorAll("img")).map(
+      (img) => img.src
+    );
+    const listItems = Array.from(htmlDocc.querySelectorAll("li"));
+
+    // Map paragraphs to pdfmake elements
+    const pdfContent = paragraphs.map((paragraph) => {
+      return {
+        text: paragraph.innerText,
+        margin: [0, 0, 0, 10], // top, right, bottom, left
+      };
+    });
+
+    // Map images to pdfmake image objects
+    const pdfImages = images.map((image) => {
+      return { image, width: 400, margin: [0, 10] }; // specify width and margin as needed
+    });
+
+    // Map list items to pdfmake list objects
+    const pdfListItems = listItems.map((listItem) => {
+      return listItem.innerText;
+    });
+
+    // Define the document definition based on the PDF content
+    const documentDefinition = {
+      content: [
+        // Construct the document content using pdfmake structure
+        { text: "PDF Content extracted from HTML string", style: "header" },
+        ...pdfContent,
+        ...pdfImages,
+        { ul: pdfListItems }, // create a list from the list items
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10], // top, right, bottom, left
+        },
       },
-      () => {
-        const pdfBlob = pdf.output("blob");
+    };
 
-        // Create URL for the Blob
-        const pdfUrl = URL.createObjectURL(pdfBlob);
+    // Create the PDF
+    const pdfDoc = pdfMake.createPdf(documentDefinition);
 
-        // Open the PDF in a new tab
-        window.open(pdfUrl, "_blank");
-      }
-    ); */
-  } else {
-    const newWindow = window.open("", "_blank");
-    newWindow.document.open();
-    newWindow.document.write(htmlDoc);
-    newWindow.document.close();
+    // Download the PDF
+    pdfDoc.download("your_pdf_filename.pdf");
   }
 };
 
