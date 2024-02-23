@@ -153,30 +153,60 @@ export const viewHtml = async (htmlDoc, type = "pdf") => {
       },
     });
   } */
-    /* const pdf = new jsPDF("p", "mm", "a4");
-    pdf.fromHTML(htmlDoc);
-    pdf.save("my-document.pdf"); */
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlDoc, "text/html");
-    const images = doc.querySelectorAll("img");
 
-    for (const img of images) {
-      const url = img.getAttribute("src");
-      if (url.startsWith("data:image")) continue; // Skip if the image is already in base64 format
-      const base64 = await getBase64FromUrl(url);
-      img.setAttribute("src", base64);
+    const imgSrcs = [];
+    const imgRegex = /<img[^>]+src="?([^"\s]+)"?[^>]*>/g;
+
+    let match;
+    while ((match = imgRegex.exec(htmlDoc)) !== null) {
+      imgSrcs.push(match[1]);
     }
 
-    htmlDoc = doc.documentElement.outerHTML;
-    const pdf = new jsPDF();
-    pdf.fromHTML(htmlDoc, 15, 15);
-    const pdfBlob = pdf.output("blob");
+    console.log("images", imgSrcs);
+
+    var doc = new jsPDF();
+    let string = "<p>Hello There</p>";
+
+    doc.setFontSize(40);
+    //doc.text(htmlDoc, 15, 15);
+    doc.text(35, 25, string);
+    if (imgSrcs.length > 0) {
+      doc.addImage(imgSrcs[0], "JPEG", 15, 40, 180, 180);
+    }
+
+    const pdfBlob = doc.output("blob");
 
     // Create URL for the Blob
     const pdfUrl = URL.createObjectURL(pdfBlob);
 
     // Open the PDF in a new tab
     window.open(pdfUrl, "_blank");
+
+    /* const pdf = new jsPDF();
+    const specialElementHandlers = {
+      "#editor": (element, renderer) => {
+        return true;
+      },
+    };
+
+    pdf.fromHTML(
+      htmlDoc,
+      15,
+      15,
+      {
+        width: 170,
+        elementHandlers: specialElementHandlers,
+      },
+      () => {
+        const pdfBlob = pdf.output("blob");
+
+        // Create URL for the Blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Open the PDF in a new tab
+        window.open(pdfUrl, "_blank");
+      }
+    ); */
   } else {
     const newWindow = window.open("", "_blank");
     newWindow.document.open();
