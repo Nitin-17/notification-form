@@ -134,71 +134,73 @@ export const viewHtml = async (htmlDoc, type) => {
       elementHandlers: specialElementHandlers,
     }); */
 
-    /*     var doc = new jsPDF();
+    console.log("htmlDoc", htmlDoc);
     const tempElement = document.createElement("div");
     tempElement.innerHTML = htmlDoc;
-    console.log("htmldoccccc", tempElement);
+    /*  tempElement.setAttribute("id", "container");
+    console.log("tempelement", tempElement); */
+    document.body.appendChild(tempElement);
 
-    // Assuming "container" is an ID, use "#" to select it
-    const input = tempElement.querySelector("#container");
-    html2canvas(input).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, "JPEG", 0, 0);
-      // pdf.output('dataurlnewwindow');
-      pdf.save("download.pdf");
+    //const input = document.querySelector("#container");
+    //console.log(input);
+    /* html2canvas(tempElement, {}).then((canvas) => {
+      var imgData = canvas.toDataURL("image/png");
+      var imgWidth = 210;
+      var pageHeight = 295;
+      var imgHeight = (canvas.height * imgWidth) / canvas.width;
+      var heightLeft = imgHeight;
+
+      var doc = new jsPDF("p", "mm");
+      var position = 0;
+
+      doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        doc.addPage();
+        doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      //doc.save("download.pdf");
+      window.open(doc.output("bloburl"));
     }); */
 
-    const domParser = new DOMParser();
-    const htmlDocc = domParser.parseFromString(htmlDoc, "text/html");
+    /* var pdf = new jsPDF("p", "mm");
 
-    const paragraphs = Array.from(htmlDocc.querySelectorAll("p"));
-    const images = Array.from(htmlDocc.querySelectorAll("img")).map(
-      (img) => img.src
-    );
-    const listItems = Array.from(htmlDocc.querySelectorAll("li"));
-
-    // Map paragraphs to pdfmake elements
-    const pdfContent = paragraphs.map((paragraph) => {
-      return {
-        text: paragraph.innerText,
-        margin: [0, 0, 0, 10], // top, right, bottom, left
-      };
-    });
-
-    // Map images to pdfmake image objects
-    const pdfImages = images.map((image) => {
-      return { image, width: 400, margin: [0, 10] }; // specify width and margin as needed
-    });
-
-    // Map list items to pdfmake list objects
-    const pdfListItems = listItems.map((listItem) => {
-      return listItem.innerText;
-    });
-
-    // Define the document definition based on the PDF content
-    const documentDefinition = {
-      content: [
-        // Construct the document content using pdfmake structure
-        { text: "PDF Content extracted from HTML string", style: "header" },
-        ...pdfContent,
-        ...pdfImages,
-        { ul: pdfListItems }, // create a list from the list items
-      ],
-      styles: {
-        header: {
-          fontSize: 18,
-          bold: true,
-          margin: [0, 0, 0, 10], // top, right, bottom, left
-        },
+    pdf.fromHTML(tempElement, {
+      callback: function (doc) {
+        // Save the PDF
+        doc.save("document-html.pdf");
       },
-    };
+      margin: [10, 10, 10, 10],
+      autoPaging: "text",
+      x: 0,
+      y: 0,
+      width: 190, //target width in the PDF document
+      windowWidth: 675, //window width in CSS pixels
+    });
+    window.open(pdf.output("bloburl")); */
 
-    // Create the PDF
-    const pdfDoc = pdfMake.createPdf(documentDefinition);
-
-    // Download the PDF
-    pdfDoc.download("your_pdf_filename.pdf");
+    html2canvas(tempElement, {
+      useCORS: true,
+      allowTaint: true,
+      scrollY: -window.scrollY,
+    }).then((canvas) => {
+      const image = canvas.toDataURL("image/jpeg", 1.0);
+      const doc = new jsPDF("p", "px", "a4");
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const widthRatio = pageWidth / canvas.width;
+      const heightRatio = pageHeight / canvas.height;
+      const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+      const canvasWidth = canvas.width * ratio;
+      const canvasHeight = canvas.height * ratio;
+      const marginX = (pageWidth - canvasWidth) / 2;
+      const marginY = (pageHeight - canvasHeight) / 2;
+      doc.addImage(image, "JPEG", marginX, marginY, canvasWidth, canvasHeight);
+      window.open(doc.output("bloburl"));
+    });
   }
 };
 
