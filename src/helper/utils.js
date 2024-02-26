@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import htmlToPdfmake from "html-to-pdfmake";
+import html2pdf from "html2pdf.js";
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
 
@@ -134,16 +135,17 @@ export const viewHtml = async (htmlDoc, type) => {
       elementHandlers: specialElementHandlers,
     }); */
 
-    console.log("htmlDoc", htmlDoc);
+    console.log("htmlDocccc", htmlDoc);
     const tempElement = document.createElement("div");
     tempElement.innerHTML = htmlDoc;
     /*  tempElement.setAttribute("id", "container");
     console.log("tempelement", tempElement); */
     document.body.appendChild(tempElement);
+    console.log(tempElement);
 
     //const input = document.querySelector("#container");
     //console.log(input);
-    /* html2canvas(tempElement, {}).then((canvas) => {
+    /*     html2canvas(tempElement, {}).then((canvas) => {
       var imgData = canvas.toDataURL("image/png");
       var imgWidth = 210;
       var pageHeight = 295;
@@ -182,7 +184,7 @@ export const viewHtml = async (htmlDoc, type) => {
     });
     window.open(pdf.output("bloburl")); */
 
-    html2canvas(tempElement, {
+    /* html2canvas(tempElement, {
       useCORS: true,
       allowTaint: true,
       scrollY: -window.scrollY,
@@ -200,7 +202,44 @@ export const viewHtml = async (htmlDoc, type) => {
       const marginY = (pageHeight - canvasHeight) / 2;
       doc.addImage(image, "JPEG", marginX, marginY, canvasWidth, canvasHeight);
       window.open(doc.output("bloburl"));
+    }); */
+
+    var pdf = new jsPDF("p", "mm", "a4");
+    /* 
+    pdf.fromHTML(tempElement, {
+      callback: function (doc) {
+        // Save the PDF
+        console.log("callback");
+        doc.save("document-html.pdf");
+      },
+      margin: [10, 10, 10, 10],
+      autoPaging: "text",
+      x: 10,
+      y: 10,
+      width: 190, //target width in the PDF document
+      height: 200,
+      windowWidth: 675, //window width in CSS pixels
     });
+    window.open(pdf.output("bloburl")); */
+    let options = {
+      orientation: "p",
+      unit: "mm",
+      format: "a4",
+      putOnlyUsedFonts: true,
+    };
+    pdf.fromHTML(
+      tempElement,
+      10,
+      0,
+      {
+        width: 297, // max width of content on PDF
+        height: 420,
+      },
+      function (bla) {
+        window.open(pdf.output("bloburl"));
+      },
+      options
+    );
   }
 };
 
