@@ -119,6 +119,20 @@ export const viewHtml = async (htmlDoc, type) => {
     document.body.removeChild(link);
   } else {
     console.log("called");
+
+    var pageSource = document.implementation.createHTMLDocument("New Document");
+
+    // Set the HTML content
+    pageSource.documentElement.innerHTML = htmlDoc;
+
+    // Return the HTML source
+    console.log(pageSource.documentElement.outerHTML);
+
+    const newWindow = window.open("", "_blank");
+    newWindow.document.open();
+    newWindow.document.write(htmlDoc);
+    newWindow.document.close();
+
     /*    var doc = new jsPDF();
 
     // We'll make our own renderer to skip this editor
@@ -135,13 +149,16 @@ export const viewHtml = async (htmlDoc, type) => {
       elementHandlers: specialElementHandlers,
     }); */
 
-    console.log("htmlDocccc", htmlDoc);
+    /* var generatedSource = new XMLSerializer().serializeToString(htmlDoc);
+    console.log("xml", generatedSource); */
+
+    /* console.log("htmlDocccc", htmlDoc);
     const tempElement = document.createElement("div");
     tempElement.innerHTML = htmlDoc;
     /*  tempElement.setAttribute("id", "container");
-    console.log("tempelement", tempElement); */
-    document.body.appendChild(tempElement);
-    console.log(tempElement);
+    console.log("tempelement", tempElement);
+    //document.body.appendChild(tempElement);
+    console.log(tempElement); */
 
     //const input = document.querySelector("#container");
     //console.log(input);
@@ -204,7 +221,6 @@ export const viewHtml = async (htmlDoc, type) => {
       window.open(doc.output("bloburl"));
     }); */
 
-    var pdf = new jsPDF("p", "mm", "a4");
     /* 
     pdf.fromHTML(tempElement, {
       callback: function (doc) {
@@ -221,25 +237,29 @@ export const viewHtml = async (htmlDoc, type) => {
       windowWidth: 675, //window width in CSS pixels
     });
     window.open(pdf.output("bloburl")); */
-    let options = {
+    /*     let options = {
       orientation: "p",
-      unit: "mm",
+      unit: "cm",
       format: "a4",
       putOnlyUsedFonts: true,
+      autoPaging: "text",
+    }; */
+
+    var pdf = new jsPDF("p", "pt", "a4");
+
+    /*  let margin = {
+      top: 10,
+      right: 10,
+      bottom: 100,
+      left: 2,
+      width: 500,
+      pagesplit: true,
+      autoPaging: "text",
+      image: { type: "jpeg", quality: 0.98 },
     };
-    pdf.fromHTML(
-      tempElement,
-      10,
-      0,
-      {
-        width: 297, // max width of content on PDF
-        height: 420,
-      },
-      function (bla) {
-        window.open(pdf.output("bloburl"));
-      },
-      options
-    );
+    pdf.fromHTML(tempElement, 50, 20, margin, function (bla) {
+      window.open(pdf.output("bloburl"));
+    }); */
   }
 };
 
