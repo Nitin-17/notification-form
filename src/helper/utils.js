@@ -312,17 +312,10 @@ export const viewHtml = async (htmlDoc, type) => {
     mywindow.addEventListener("afterprint", () => mywindow.close()); */
 
     //-----------------------
+    var doc = new jsPDF();
 
     // Source HTMLElement or a string containing HTML.
     //var elementHTML = document.querySelector("#contentToPrint");
-    /*     let options = {
-      margin: [10, 10, 10, 10],
-      autoPaging: "text",
-      x: 0,
-      y: 0,
-      width: 190, //target width in the PDF document
-      windowWidth: 675, //window width in CSS pixels
-    }; */
 
     var pdf = new jsPDF("p", "mm");
     pdf.fromHTML(
@@ -330,9 +323,6 @@ export const viewHtml = async (htmlDoc, type) => {
       10,
       10,
       {
-        orientation: "p",
-        unit: "mm",
-        format: "a4",
         putOnlyUsedFonts: true,
         margin: [10, 10, 10, 10],
         autoPaging: "text",
@@ -344,7 +334,13 @@ export const viewHtml = async (htmlDoc, type) => {
         image: { type: "jpeg", quality: 0.98, width: 100 },
       },
       function (bla) {
-        window.open(pdf.output("bloburl"));
+        const pdfBlob = pdf.output("blob");
+
+        // Create URL for the Blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Open the PDF in a new tab
+        window.open(pdfUrl, "_blank", "text.pdf");
       }
       //options
     );
