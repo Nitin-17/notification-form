@@ -3,8 +3,9 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import htmlToPdfmake from "html-to-pdfmake";
 import html2pdf from "html2pdf.js";
-const pdfMake = require("pdfmake/build/pdfmake");
-const pdfFonts = require("pdfmake/build/vfs_fonts");
+//import htmlToPdfmake from "html-to-pdfmake";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
 
 // Register the fonts
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -312,14 +313,14 @@ export const viewHtml = async (htmlDoc, type) => {
     mywindow.addEventListener("afterprint", () => mywindow.close()); */
 
     //-----------------------
-    var doc = new jsPDF();
 
     // Source HTMLElement or a string containing HTML.
     //var elementHTML = document.querySelector("#contentToPrint");
 
-    var pdf = new jsPDF("p", "mm");
+    //old version
+    /*     var pdf = new jsPDF("p", "mm", "a4");
     pdf.fromHTML(
-      tempElement,
+      htmlDoc,
       10,
       10,
       {
@@ -343,7 +344,42 @@ export const viewHtml = async (htmlDoc, type) => {
         window.open(pdfUrl, "_blank", "text.pdf");
       }
       //options
-    );
+    ); */
+
+    //lastest jspdf version
+    /*    var doc = new jsPDF();
+    doc.fromHTML(tempElement, {
+      callback: function (doc) {
+        // Save the PDF
+        const pdfBlob = doc.output("blob");
+
+        // Create URL for the Blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Open the PDF in a new tab
+        window.open(pdfUrl, "_blank", "text.pdf");
+      },
+      putOnlyUsedFonts: true,
+      margin: [10, 10, 10, 10],
+      autoPaging: "text",
+      x: 0,
+      y: 0,
+      width: 190, //target width in the PDF document
+      windowWidth: 675, //window width in CSS pixels
+      pagesplit: true,
+      html2canvas: html2canvas.windowWidth,
+      image: { type: "jpeg", quality: 0.98, width: 100, height: 100 },
+    }); */
+
+    var html = htmlToPdfmake(htmlDoc, {
+      window: window,
+      tableAutoSize: true,
+      imagesByReference: true,
+      ignoreStyles: ["font-family"],
+    });
+
+    var dd = { content: html.content, images: html.images };
+    pdfMake.createPdf(dd).download();
   }
 };
 

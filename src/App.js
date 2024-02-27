@@ -2,8 +2,8 @@ import React from "react";
 import FileForm from "./components/FileForm.js";
 import { NavLink, Route, Routes } from "react-router-dom";
 import FileList from "./components/FileList.js";
-import PDFDocument from "./helper/reactPdf.js";
 import "./App.css";
+import SunEditorApp from "./helper/SunEditorApp.js";
 
 const App = () => {
   return (
@@ -16,14 +16,16 @@ const App = () => {
           <li>
             <NavLink to="/filelist">Filelist</NavLink>
           </li>
-          {/* <li>
-            <PDFDocument />
-          </li> */}
+
+          <li>
+            <NavLink to="/suneditor">SunEditor</NavLink>
+          </li>
         </ul>
       </nav>
       <Routes>
         <Route path="/" element={<FileForm />} />
         <Route path="/filelist" element={<FileList />} />
+        <Route path="/suneditor" element={<SunEditorApp />} />
       </Routes>
     </div>
   );

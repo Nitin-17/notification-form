@@ -12,6 +12,7 @@ import {
 } from "../helper/utils";
 import FileUploadInput from "./FileUploadInput";
 import EditField from "./EditField";
+import SunEditorApp from "../helper/SunEditorApp";
 import { addFormData } from "../features/listSlice";
 
 const FileUpload = () => {
@@ -186,10 +187,11 @@ const FileUpload = () => {
                     setIsSubmittedForm={setIsSubmittedForm}
                   />
                 ) : (
-                  <EditField
+                  /*  <EditField
                     setFieldValue={setFieldValue}
                     handleEditInputChange={handleEditInputChange}
-                  />
+                  /> */
+                  <SunEditorApp setFieldValue={setFieldValue} />
                 )}
               </div>
               <button
