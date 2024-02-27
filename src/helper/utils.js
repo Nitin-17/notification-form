@@ -120,7 +120,7 @@ export const viewHtml = async (htmlDoc, type) => {
   } else {
     console.log("called");
 
-    var pageSource = document.implementation.createHTMLDocument("New Document");
+    /*     var pageSource = document.implementation.createHTMLDocument("New Document");
 
     // Set the HTML content
     pageSource.documentElement.innerHTML = htmlDoc;
@@ -131,7 +131,7 @@ export const viewHtml = async (htmlDoc, type) => {
     const newWindow = window.open("", "_blank");
     newWindow.document.open();
     newWindow.document.write(htmlDoc);
-    newWindow.document.close();
+    newWindow.document.close(); */
 
     /*    var doc = new jsPDF();
 
@@ -152,13 +152,13 @@ export const viewHtml = async (htmlDoc, type) => {
     /* var generatedSource = new XMLSerializer().serializeToString(htmlDoc);
     console.log("xml", generatedSource); */
 
-    /* console.log("htmlDocccc", htmlDoc);
+    console.log("htmlDocccc", htmlDoc);
     const tempElement = document.createElement("div");
     tempElement.innerHTML = htmlDoc;
-    /*  tempElement.setAttribute("id", "container");
-    console.log("tempelement", tempElement);
     //document.body.appendChild(tempElement);
+    /*  tempElement.setAttribute("id", "container");
     console.log(tempElement); */
+    console.log("tempelement", tempElement);
 
     //const input = document.querySelector("#container");
     //console.log(input);
@@ -245,21 +245,109 @@ export const viewHtml = async (htmlDoc, type) => {
       autoPaging: "text",
     }; */
 
-    var pdf = new jsPDF("p", "pt", "a4");
+    /*     var pdf = new jsPDF("p", "pt", "a4");
 
-    /*  let margin = {
-      top: 10,
+    let margin = {
+      top: 150,
       right: 10,
-      bottom: 100,
+      bottom: 150,
       left: 2,
       width: 500,
       pagesplit: true,
       autoPaging: "text",
       image: { type: "jpeg", quality: 0.98 },
     };
+
     pdf.fromHTML(tempElement, 50, 20, margin, function (bla) {
       window.open(pdf.output("bloburl"));
     }); */
+
+    /*  var pdf = new jsPDF("p", "pt", "a4");
+    window.html2canvas = html2canvas;
+
+    let options = {
+      width: 500,
+      pagesplit: true,
+      autoPaging: "text",
+      image: { type: "jpeg", quality: 0.98 },
+    };
+
+     pdf.html(htmlDoc, {
+      callback: function (bla) {
+        window.open(pdf.output("bloburl"));
+      },
+      image: { type: "jpeg", quality: 0.98 },
+    }); 
+    //pdf.html(htmlDoc).then(() => pdf.save("test.pdf")); */
+
+    //-------------------------
+    /* var opt = {
+      margin: 1,
+      filename: "myfile.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+    };
+
+    // New Promise-based usage:
+    html2pdf().set(opt).from(tempElement).save(); */
+
+    //-------------------------
+    /* let title = "example.pdf";
+
+    let mywindow = window.open(
+      "",
+      "PRINT",
+      "height=650,width=900,top=100,left=150"
+    );
+
+    mywindow.document.write(`<html><head><title>${title}</title>`);
+    mywindow.document.write("</head><body >");
+    mywindow.document.write(htmlDoc);
+    mywindow.document.write("</body></html>");
+
+    mywindow.document.close();
+    mywindow.focus(); 
+
+    mywindow.print();
+    mywindow.addEventListener("afterprint", () => mywindow.close()); */
+
+    //-----------------------
+
+    // Source HTMLElement or a string containing HTML.
+    //var elementHTML = document.querySelector("#contentToPrint");
+    /*     let options = {
+      margin: [10, 10, 10, 10],
+      autoPaging: "text",
+      x: 0,
+      y: 0,
+      width: 190, //target width in the PDF document
+      windowWidth: 675, //window width in CSS pixels
+    }; */
+
+    var pdf = new jsPDF("p", "mm");
+    pdf.fromHTML(
+      tempElement,
+      10,
+      10,
+      {
+        orientation: "p",
+        unit: "mm",
+        format: "a4",
+        putOnlyUsedFonts: true,
+        margin: [10, 10, 10, 10],
+        autoPaging: "text",
+        x: 0,
+        y: 0,
+        width: 190, //target width in the PDF document
+        windowWidth: 675, //window width in CSS pixels
+        pageSplit: true,
+        image: { type: "jpeg", quality: 0.98, width: 100 },
+      },
+      function (bla) {
+        window.open(pdf.output("bloburl"));
+      }
+      //options
+    );
   }
 };
 

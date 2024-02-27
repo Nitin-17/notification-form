@@ -2,6 +2,7 @@ import React from "react";
 import FileForm from "./components/FileForm.js";
 import { NavLink, Route, Routes } from "react-router-dom";
 import FileList from "./components/FileList.js";
+import PDFDocument from "./helper/reactPdf.js";
 import "./App.css";
 
 const App = () => {
@@ -15,6 +16,9 @@ const App = () => {
           <li>
             <NavLink to="/filelist">Filelist</NavLink>
           </li>
+          {/* <li>
+            <PDFDocument />
+          </li> */}
         </ul>
       </nav>
       <Routes>
