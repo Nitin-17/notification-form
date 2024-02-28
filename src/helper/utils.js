@@ -376,16 +376,23 @@ export const viewHtml = async (htmlDoc, type) => {
       tableAutoSize: true,
       imagesByReference: true,
       ignoreStyles: ["font-family"],
+      defaultStyles: {
+        img: {
+          width: 517, // Set a default width for all images
+          height: 390, // Set a default height for all images
+          margin: [0, 0, 0, 10], // Set margin [top, right, bottom, left] for all images
+        },
+        /*   p: {
+          margin: [0, 0, 0, 0],
+        }, */
+      },
     });
 
     var dd = {
       content: [html.content],
-      margin: [100, 0, 0, 0],
       styles: {
-        header: {
-          fontSize: 80,
-          bold: true,
-          margin: [10, 0, 0, 10],
+        "html-image": {
+          marginBottom: 10,
         },
       },
       images: html.images,

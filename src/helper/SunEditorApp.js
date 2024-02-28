@@ -58,7 +58,7 @@ const SunEditorApp = (props) => {
     };
 
     img.onload = function () {
-      const MAX_WIDTH = 500;
+      const MAX_WIDTH = 514;
       const MAX_HEIGHT = 400;
 
       // Set the canvas dimensions to the maximum width and height
