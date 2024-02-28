@@ -21,22 +21,76 @@ import {
 } from "suneditor/src/plugins";
 
 const SunEditorApp = (props) => {
-  console.log("props", props);
   const { setFieldValue } = props;
-  const sunEditorRef = useRef(null);
+  //const sunEditorRef = useRef(null);
   const [value, setValue] = useState(null);
 
   const handleEditorChange = (content) => {
     setValue(content);
+    console.log("content is", content);
   };
 
   const sendValue = () => {
-    console.log(value); // Directly use value here
-    console.log("called");
+    console.log("value send is", value);
     setFieldValue("file", value);
     const type = "html";
     setFieldValue("type", type);
     setFieldValue("date", getCurrentDate());
+  };
+
+  const handleImageUpload = (
+    targetImgElement,
+    index,
+    state,
+    imageInfo,
+    remainingFilesCount,
+    files
+  ) => {};
+
+  function ResizeImage(files, uploadHandler) {
+    const uploadFile = files[0];
+    const img = document.createElement("img");
+    const canvas = document.createElement("canvas");
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      img.src = e.target.result;
+    };
+
+    img.onload = function () {
+      const MAX_WIDTH = 500;
+      const MAX_HEIGHT = 400;
+
+      // Set the canvas dimensions to the maximum width and height
+      canvas.width = MAX_WIDTH;
+      canvas.height = MAX_HEIGHT;
+
+      const ctx = canvas.getContext("2d");
+
+      // Draw the image onto the canvas, stretching it to fit
+      ctx.drawImage(img, 0, 0, MAX_WIDTH, MAX_HEIGHT);
+
+      // Convert the canvas back to a blob and pass it to the upload handler
+      canvas.toBlob(
+        function (blob) {
+          uploadHandler([new File([blob], uploadFile.name)]);
+        },
+        uploadFile.type,
+        1
+      );
+    };
+
+    reader.readAsDataURL(uploadFile);
+  }
+
+  const handleImageUploadBefore = (files, info, uploadHandler) => {
+    // uploadHandler is a function
+    console.log(files, info);
+    try {
+      ResizeImage(files, uploadHandler);
+    } catch (err) {
+      uploadHandler(err.toString());
+    }
   };
 
   return (
@@ -94,6 +148,8 @@ const SunEditorApp = (props) => {
           ],
         }}
         onChange={(e) => handleEditorChange(e, setFieldValue)}
+        onImageUpload={handleImageUpload}
+        onImageUploadBefore={handleImageUploadBefore}
       />
       <button type="button" onClick={sendValue}>
         Submit

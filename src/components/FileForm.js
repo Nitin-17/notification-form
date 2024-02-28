@@ -96,7 +96,7 @@ const FileUpload = () => {
     }
   };
 
-  console.log("state changed", selectedOption);
+  //console.log("state changed", selectedOption);
 
   return (
     <>

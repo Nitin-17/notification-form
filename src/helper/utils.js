@@ -378,7 +378,18 @@ export const viewHtml = async (htmlDoc, type) => {
       ignoreStyles: ["font-family"],
     });
 
-    var dd = { content: html.content, images: html.images };
+    var dd = {
+      content: [html.content],
+      margin: [100, 0, 0, 0],
+      styles: {
+        header: {
+          fontSize: 80,
+          bold: true,
+          margin: [10, 0, 0, 10],
+        },
+      },
+      images: html.images,
+    };
     pdfMake.createPdf(dd).download();
   }
 };
