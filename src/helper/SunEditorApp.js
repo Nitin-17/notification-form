@@ -21,13 +21,17 @@ import {
 } from "suneditor/src/plugins";
 
 const SunEditorApp = (props) => {
-  const { setFieldValue } = props;
-  //const sunEditorRef = useRef(null);
+  const { setFieldValue, setSelectedOption } = props;
+  const sunEditorRef = useRef(null);
   const [value, setValue] = useState(null);
 
   const handleEditorChange = (content) => {
     setValue(content);
-    console.log("content is", content);
+    /*  console.log("content is", content);
+    setFieldValue("file", value);
+    const type = "html";
+    setFieldValue("type", type);
+    setFieldValue("date", getCurrentDate()); */
   };
 
   const sendValue = () => {
@@ -36,6 +40,14 @@ const SunEditorApp = (props) => {
     const type = "html";
     setFieldValue("type", type);
     setFieldValue("date", getCurrentDate());
+    //setSelectedOption("upload");
+    //handleSubmit();
+    // clear editor contents
+    /*   const editor = sunEditorRef?.current?.editor;
+    console.log("Editor", editor);
+    if (editor) {
+      editor.setContents("");
+    } */
   };
 
   const handleImageUpload = (
@@ -150,8 +162,13 @@ const SunEditorApp = (props) => {
         onChange={(e) => handleEditorChange(e, setFieldValue)}
         onImageUpload={handleImageUpload}
         onImageUploadBefore={handleImageUploadBefore}
+        ref={sunEditorRef}
       />
-      <button type="button" onClick={sendValue}>
+      <button
+        type="submit"
+        onClick={sendValue}
+        className="w-32 rounded-full bg-cyan-400 border-2 p-3 text-lg mt-4"
+      >
         Submit
       </button>
     </div>

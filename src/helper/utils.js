@@ -382,6 +382,14 @@ export const viewHtml = async (htmlDoc, type) => {
           height: 390, // Set a default height for all images
           margin: [0, 0, 0, 10], // Set margin [top, right, bottom, left] for all images
         },
+        table: {
+          width: [100, "*", 200, "*"],
+          body: [["width=100", "star-sized", "width=200", "star-sized"]],
+          //th: [{ backgroundColor: "#CCCCCC" }],
+        },
+        ol: {
+          margin: [0, 0, 0, 4],
+        },
         /*   p: {
           margin: [0, 0, 0, 0],
         }, */

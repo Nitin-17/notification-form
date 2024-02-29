@@ -92,7 +92,10 @@ const FileUpload = () => {
     } */ else {
       dispatch(addFormData(values));
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      alert("Done and Dusted");
       actions.resetForm();
+
+      setSelectedOption("upload");
     }
   };
 
@@ -191,15 +194,22 @@ const FileUpload = () => {
                     setFieldValue={setFieldValue}
                     handleEditInputChange={handleEditInputChange}
                   /> */
-                  <SunEditorApp setFieldValue={setFieldValue} />
+                  <SunEditorApp
+                    setFieldValue={setFieldValue}
+                    setSelectedOption={setSelectedOption}
+                  />
                 )}
               </div>
-              <button
-                type="submit"
-                className="w-32 rounded-full bg-cyan-400 border-2 p-3 text-lg"
-              >
-                Submit
-              </button>
+              {selectedOption === "upload" ? (
+                <button
+                  type="submit"
+                  className="w-32 rounded-full bg-cyan-400 border-2 p-3 text-lg"
+                >
+                  Submit
+                </button>
+              ) : (
+                <></>
+              )}
             </div>
           </Form>
         )}
